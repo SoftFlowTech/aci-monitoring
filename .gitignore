@@ -1,0 +1,33 @@
+# IDE
+.vscode
+.idea
+
+# System files
+.DS_Store
+
+# Generated files
+node_modules/
+npm-debug.log*
+coverage/
+dist/
+
+# Temporary data
+*.log
+.node_repl_history
+
+# Flask
+instance/
+.webassets-cache
+
+# Environments
+.env
+.venv
+env/
+venv/
+local.env
+
+# Cache
+__pycache__/
+*.py[cod]
+.eslintcache
+.nyc_output

@@ -1,0 +1,55 @@
+name: Data Poller
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'data-poller/**'
+      - '.github/workflows/data-poller.yml'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'data-poller/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./data-poller
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.9
+
+      - name: Install pipenv
+        run: |
+          python -m pip install --upgrade pipenv wheel
+
+      - name: Install dependencies
+        run: |
+          pipenv install --deploy --dev
+
+      - name: Check packages safety
+        run: |
+          pipenv check
+
+      - name: Run Black formatter check
+        run: |
+          pipenv run black --diff --check .
+
+      - name: Run Flake8 linter
+        run: |
+          pipenv run flake8 .
+
+      - name: Run type check
+        run: |
+          pipenv run mypy .
+
+      - name: Run unit tests
+        run: |
+          pipenv run pytest

@@ -1,0 +1,10 @@
+global:
+  scrape_interval: 1s
+  scrape_timeout: 500ms
+  evaluation_interval: 1s
+
+scrape_configs:
+  - job_name: 'Pushgateway'
+    honor_labels: true
+    static_configs:
+      - targets: [ 'pushgateway:9091' ]

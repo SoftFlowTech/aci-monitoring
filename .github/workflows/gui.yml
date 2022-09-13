@@ -1,0 +1,49 @@
+name: GUI
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'gui/**'
+      - '.github/workflows/gui.yml'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'gui/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./gui
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Node v18
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: |
+          npm install
+
+      - name: Check packages safety
+        run: |
+          npm audit
+
+      - name: Run linter
+        run: |
+          npm run lint
+
+      - name: Run unit tests
+        run: |
+          npm test
+
+      - name: Run build
+        env:
+          API_URL: http://api/
+        run: |
+          npm run build

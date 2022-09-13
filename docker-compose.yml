@@ -1,0 +1,126 @@
+version: '2'
+
+networks:
+  monitoring:
+    driver: bridge
+
+volumes:
+  redis_data:
+  prometheus_data:
+  grafana_data:
+
+services:
+  gui:
+    image: softflow/aci-monitoring_gui:${VERSION-latest}
+    build:
+      context: gui
+    restart: unless-stopped
+    mem_limit: 64m
+    cpu_shares: 128
+    depends_on:
+      - configuration-api
+    environment:
+      CONFIG_API_URL: "http://configuration-api:8080"
+    ports:
+      - "5006:80"
+    labels:
+      org.label-schema.name: "Configuration GUI"
+      org.label-schema.description: "GUI to manage metrics configuration"
+
+  configuration-api:
+    image: softflow/aci-monitoring_configuration-api:${VERSION-latest}
+    build:
+      context: configuration-api
+    restart: unless-stopped
+    mem_limit: 128mb
+    cpu_shares: 128
+    depends_on:
+      - redis
+    environment:
+      DB_REDIS_URL: "redis://redis:6379/0"
+    ports:
+      - "5000:8080"
+    labels:
+      org.label-schema.name: "Configuration API"
+      org.label-schema.description: "API to pass metrics configuration between GUI and Data Poller"
+
+  data-poller:
+    image: softflow/aci-monitoring_data-poller:${VERSION-latest}
+    build:
+      context: data-poller
+    restart: unless-stopped
+    mem_limit: 192mb
+    cpu_shares: 512
+    depends_on:
+      - redis
+      - pushgateway
+    environment:
+      DB_REDIS_URL: "redis://redis:6379/0"
+      PROMETHEUS_PUSHGATEWAY_URL: "pushgateway:9091"
+    env_file:
+      - local.env
+    ports:
+      - "5004:8080"
+    labels:
+      org.label-schema.name: "ACI Data Poller"
+      org.label-schema.description: "Schedules loading data from the APIC and pass to Prometheus"
+
+  redis:
+    image: redis:7-alpine
+    command: redis-server --appendonly yes
+    restart: unless-stopped
+    mem_limit: 64mb
+    cpu_shares: 128
+    volumes:
+      - redis_data:/data
+    ports:
+      - "5003:6379"
+    labels:
+      org.label-schema.name: "Configuration Database"
+      org.label-schema.description: "This service stores configuration for polling attributes"
+
+  prometheus:
+    image: prom/prometheus:v2.37.0
+    restart: unless-stopped
+    mem_limit: 128mb
+    cpu_shares: 512
+    depends_on:
+      - pushgateway
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    ports:
+      - "5002:9090"
+    labels:
+      org.label-schema.name: "Time-series database"
+      org.label-schema.description: "Store and pass metrics to Grafana dashboard"
+
+  pushgateway:
+    image: prom/pushgateway:v1.4.3
+    restart: unless-stopped
+    mem_limit: 128mb
+    cpu_shares: 512
+    ports:
+      - "5005:9091"
+    labels:
+      org.label-schema.name: "Prometheus' Push Gateway"
+      org.label-schema.description: "Acts as middleware between application and Prometheus"
+
+  grafana:
+    image: grafana/grafana-oss:9.0.7
+    restart: unless-stopped
+    mem_limit: 256mb
+    cpu_shares: 1024
+    depends_on:
+      - prometheus
+    environment:
+      GF_USERS_ALLOW_SIGN_UP: false
+      PROMETHEUS_URL: http://prometheus:9090
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning
+      - grafana_data:/var/lib/grafana
+    ports:
+      - "5001:3000"
+    labels:
+      org.label-schema.name: "Monitoring dashboard"
+      org.label-schema.description: "Display metrics from ACI"

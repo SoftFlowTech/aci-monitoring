@@ -1,0 +1,22 @@
+[[source]]
+url = "https://pypi.python.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+flask = "2.2.2"
+flask-cors = "3.0.10"
+redis = "4.3.4"
+gunicorn = "20.10.0"
+
+[dev-packages]
+black = "22.6.0"
+flake8 = "5.0.4"
+mypy = "0.971"
+pytest = "7.1.2"
+pytest-flask = "1.2.0"
+types-flask-cors = "3.0.10"
+types-redis = "4.3.17"
+
+[requires]
+python_version = "3.9"
