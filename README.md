@@ -136,13 +136,22 @@ To ensure better code quality, there is set up CI/CD to:
 
 ## Quickstart
 
-To get _aci-monitoring_ up and running run the following commands.
+It is possible to run and test the operation of the application using the
+[Cisco APIC Simulator
+Sandbox](https://devnetsandbox.cisco.com/RM/Diagram/Index/4eaa9878-3e74-4105-b26a-bd83eeaa6cd9?diagramType=Topology).
+It is a simulated infrastructure that provides full access to ACI RESTful APIs
+over `http(s)` with XML and JSON encodings. For ACI production infrastructure,
+it is strongly recommended to create a dedicated user with RO permissions
+only.
+
+To get _aci-monitoring_ up and running on `Linux` or `macOS` system run the
+following commands.
 
 ```bash
 git clone -b main https://github.com/SoftFlowTech/aci-monitoring.git
 cd aci-monitoring
 tee local.env <<EOF
-ACI_URL=https://10.0.0.1
+ACI_URL=https://apic-ip-address
 ACI_USERNAME=aciROuser
 ACI_PASSWORD=aciROuserPass
 EOF
