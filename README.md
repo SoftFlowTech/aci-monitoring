@@ -120,17 +120,9 @@ expectations.
 
 | Component | Solution | Description | Alternative solution |
 |-----------|----------|-------------|----------------------|
-| **GUI**   | React with MUI | Powerful framework, yet simple to work with.
-Its simple to add even complex display logic | Any modern framework could work
-fine. |
-| **Database**   | Redis | There is only small amount of data that needs to be
-stored. Redis has very small requirements, yet suits the expectations. | Any
-database could be used, although in the future Redis has one great capability
-that it has built in pub/sub, so the application may subscribe to the changes
-easily.  |
-| **Dashboard & Monitoring** | Prometheus and Grafana | Common tool for that
-purpose. | If Prometheus would not be needed, InfluxDB with Grafana could be a
-better choice       
+| **GUI** | React with MUI | Powerful framework, yet simple to work with. Its simple to add even complex display logic. | Any modern framework could work fine. |
+| **Database** | Redis | There is only small amount of data that needs to be stored. Redis has very small requirements, yet suits the expectations. | Any database could be used, although in the future Redis has one great capability that it has built in pub/sub, so the application may subscribe to the changes easily. |
+| **Dashboard & Monitoring** | Prometheus and Grafana | Common tool for that purpose. | If Prometheus would not be needed, InfluxDB with Grafana could be a better choice. |
 
 ### Code quality
 
