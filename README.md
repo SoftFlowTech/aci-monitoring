@@ -173,7 +173,7 @@ default credentials are:
 * Username: **admin**
 * Password: **admin**
 
-Prometheus is available at  Prometheus is also available at
+Prometheus is also available at
 [`http://localhost:5002`](http://localhost:5002) and can be used to write and
 test queries about the collected data.
 
